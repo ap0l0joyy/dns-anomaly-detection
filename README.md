@@ -188,3 +188,4 @@ The dashboard uses port `8088`. Do not expose the dashboard or Technitium's web 
 - **Alert** means at least one score exceeded its configured threshold. Review the event and its neighboring queries before treating it as an incident.
 
 The first implementation focuses on tunneling-like long/high-entropy DNS names and unusual query sequences. Add separate scenarios and features for NXDOMAIN floods, amplification, and cache-poisoning indicators only when your lab can produce reliable ground truth for them.
+# dns-anomaly-detection
