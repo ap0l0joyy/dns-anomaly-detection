@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dns-anomaly-lab"
+version = "0.1.0"
+description = "Learning lab for hybrid DNS anomaly detection"
+requires-python = ">=3.10"
+dependencies = ["numpy>=1.26,<3", "scikit-learn>=1.5,<2", "joblib>=1.4,<2"]
+
+[project.scripts]
+dns-detect = "dns_detect.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+

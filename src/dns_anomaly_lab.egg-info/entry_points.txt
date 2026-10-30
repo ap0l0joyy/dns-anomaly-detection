@@ -1,0 +1,2 @@
+[console_scripts]
+dns-detect = dns_detect.cli:main

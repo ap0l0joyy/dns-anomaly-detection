@@ -1,0 +1,33 @@
+services:
+  technitium:
+    image: docker.io/technitium/dns-server:latest
+    container_name: dns-anomaly-technitium
+    hostname: dns-server
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5380:5380/tcp"
+      # Use 5353 on the WSL host so this lab does not claim WSL's usual DNS port 53.
+      - "127.0.0.1:5353:53/udp"
+      - "127.0.0.1:5353:53/tcp"
+    environment:
+      DNS_SERVER_DOMAIN: dns-server
+      DNS_SERVER_LOG_FOLDER_PATH: /var/log/technitium/dns
+    volumes:
+      - technitium_config:/etc/dns
+      - technitium_logs:/var/log/technitium/dns
+
+  dashboard:
+    image: nginx:stable-alpine
+    container_name: dns-anomaly-dashboard
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8088:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./dashboard:/usr/share/nginx/html:ro
+      - ../reports:/usr/share/nginx/html/reports:ro
+
+volumes:
+  technitium_config:
+  technitium_logs:
+

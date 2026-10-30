@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DNS Anomaly Lab</title>
+  <style>
+    body{font:16px system-ui,sans-serif;margin:2rem auto;max-width:1100px;padding:0 1rem;background:#f5f7fb;color:#172033}
+    h1{margin-bottom:.2rem}.muted{color:#64748b}.cards{display:flex;gap:1rem;margin:1.4rem 0}.card{background:white;border-radius:12px;padding:1rem 1.4rem;box-shadow:0 2px 8px #15204012;min-width:150px}
+    table{width:100%;border-collapse:collapse;background:white;border-radius:12px;overflow:hidden}th,td{text-align:left;padding:.75rem;border-bottom:1px solid #e5eaf1}th{background:#eaf0f8}.alert{color:#b42318;font-weight:700}.ok{color:#067647}
+  </style>
+</head>
+<body><h1>DNS Anomaly Detection</h1><div class="muted">Random Forest classification + unsupervised Transformer next-query prediction</div>
+<div class="cards"><div class="card"><div class="muted">Events loaded</div><strong id="total">—</strong></div><div class="card"><div class="muted">Alerts</div><strong id="count">—</strong></div></div>
+<p id="status" class="muted">Loading reports/alerts.json…</p>
+<table><thead><tr><th>Time</th><th>Client</th><th>Domain</th><th>RF probability</th><th>Transformer score</th><th>Result</th><th>Reason</th></tr></thead><tbody id="rows"></tbody></table>
+<script>
+fetch('reports/alerts.json').then(r=>{if(!r.ok)throw Error('No alert file yet. Run the detector first.');return r.json()}).then(data=>{
+ const alerts=data.filter(x=>x.is_alert); document.querySelector('#total').textContent=data.length;document.querySelector('#count').textContent=alerts.length;document.querySelector('#status').textContent='Showing latest scored events.';
+ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ document.querySelector('#rows').innerHTML=data.slice(-200).reverse().map(x=>`<tr><td>${esc(x.timestamp)}</td><td>${esc(x.client_ip)}</td><td>${esc(x.domain)}</td><td>${esc(x.random_forest_attack_probability)}</td><td>${esc(x.transformer_anomaly_score)}</td><td class="${x.is_alert?'alert':'ok'}">${x.is_alert?'ALERT':'Normal'}</td><td>${esc((x.reasons||[]).join('; '))}</td></tr>`).join('');
+}).catch(e=>document.querySelector('#status').textContent=e.message);
+</script></body></html>
+
